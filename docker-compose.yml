@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+
+  broker-service:
+    build:
+      # given project folder's sideways adjacency to broker service folder 
+      context: ./../broker-service
+      dockerfile: ./../broker-service/broker-service.dockerfile
+    # restart docker container
+    restart: always
+    # docker service listens port 80, so map port 8080 on local host to 80 on docker host
+    ports:
+      - "8080:80"
+    deploy:
+      # single container
+      mode: replicated
+      replicas: 1
