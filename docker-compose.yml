@@ -17,6 +17,21 @@ services:
       mode: replicated
       replicas: 1
 
+  logger-service:
+    build:
+      # given project folder's sideways adjacency to broker service folder 
+      context: ./../logger-service
+      dockerfile: ./../logger-service/logger-service.dockerfile
+    # restart docker container
+    restart: always
+    # only accessed by other services, not local host 
+    # ports:
+    #   - "8080:80"
+    deploy:
+      # single container
+      mode: replicated
+      replicas: 1
+
   authentication-service:
     build:
       context: ./../authentication-service
@@ -46,3 +61,19 @@ services:
     volumes:
       # Folder on machine to folder inside container
       - ./db-data/postgres/:/var/lib/postgresql/data/
+
+  mongo:
+    image: 'mongo:4.2.16-bionic'
+    ports:
+      - "27017:27017"
+    # self added
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MONGO_INITDB_DATABASE: logs  
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      # post colon based on official image locations
+      - ./db-data/mongo/:/data/db 
