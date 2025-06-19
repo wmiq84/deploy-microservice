@@ -46,6 +46,14 @@ services:
       # env variable
       DSN: "user=postgres host=postgres port=5432 password=password dbname=users timezone=UTC connect_timeout=5"
 
+  listener-service:
+    build:
+      context: ./../listener-service
+      dockerfile: ./../listener-service/listener-service.dockerfile
+    deploy:
+      mode: replicated
+      replicas: 1
+
   mailer-service:
     # don't need port, only called by other services
     build:
@@ -102,3 +110,13 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+  
+  rabbitmq:
+    image: 'rabbitmq:3.9-alpine'
+    ports:
+      - "5672:5672"
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - ./db-data/rabbitmq/:/var/lib/rabbitmq/
