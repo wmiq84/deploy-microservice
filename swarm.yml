@@ -1,6 +1,19 @@
 version: '3'
 
 services: 
+  caddy:
+    image: miq84/micro-caddy:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "80:80"
+      # ssl encrypted port
+      - "443:443"
+    # every time docker redeploy, will request new certificate thus we need virtual volume
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
   
   broker-service: 
     image: miq84/broker-service:1.0.1
@@ -97,3 +110,9 @@ services:
       POSTGRES_DB: users
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
+
+volumes:
+  caddy_data:
+    # docker does not create nor delete
+    external: true
+  caddy_config:
