@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo
+  name: mailer-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo
+      app: mailer-service
   template:
     metadata:
       labels:
-        app: mongo
+        app: mailer-service
     spec:
       containers:
-      - name: mongo
-        image: "mongo:4.2.17-bionic"
+      - name: mailer-service
+        image: 'miq84/mail-service:1.0.0'
         resources:
           requests:
             memory: "64Mi"
@@ -24,12 +24,23 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         env:
-          - name: MONGO_INITDB_DATABASE
-            value: "logs"
-          - name: MONGO_INITDB_ROOT_USERNAME
-            value: "admin"
-          - name: MONGO_INITDB_ROOT_PASSWORD
-            value: "password"
+          - name: MAIL_DOMAIN
+            value: "localhost"
+          - name: MAIL_HOST
+            value: "mailhog"
+          - name: MAIL_PORT
+            value: "1025"
+          - name: MAIL_ENCRYPTION
+            value: "none"
+          - name: MAIL_USERNAME
+            value: ""
+          - name: MAIL_PASSWORD
+            value: ""
+          - name: FROM_NAME
+            value: "John Smith"
+          - name: FROM_ADDRESS
+            value: "admin@example.com" 
+
         ports:
           - containerPort: 27017
 
